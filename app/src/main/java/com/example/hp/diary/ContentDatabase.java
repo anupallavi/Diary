@@ -6,6 +6,8 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Environment;
+import android.util.Log;
+import android.widget.Toast;
 
 import java.io.File;
 
@@ -33,7 +35,7 @@ class ContentDatabase extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        String createTable = "CREATE TABLE " + TABLE_NAME + " (date DATE PRIMARY KEY, " +
+        String createTable = "CREATE TABLE " + TABLE_NAME + " (date TEXT PRIMARY KEY, " +
                 " content TEXT)";
         db.execSQL(createTable);
     }
@@ -53,34 +55,34 @@ class ContentDatabase extends SQLiteOpenHelper {
        // return date;
         if (cursor.moveToNext()) {
             String content = cursor.getString(0);
+            Log.d("DATABASE OPERATION", "getting content");
            return content;
         }
         else {
             ContentValues contentValues = new ContentValues();
             contentValues.put(COL1, date);
             contentValues.put(COL2, "");
-            db.insert(TABLE_NAME,null,contentValues);
+            db.insert(TABLE_NAME, null, contentValues);
             //String sql1 = "insert into " + TABLE_NAME + "(" + COL1 + "," + COL2+ ") values( date,'');";
             //db.execSQL(sql1);
-            return "";
+            Log.d("DATABASE OPERATION", "New date inserted");
+            return date;
         }
-
     }
 
-    public boolean addData(String content, SQLiteDatabase db) {
+    public void addData(String date, String content, SQLiteDatabase db) {
 
-        ContentValues contentValues = new ContentValues();
-        contentValues.put(COL1,date);
-        contentValues.put(COL2, content);
-
-        long result = db.insert(TABLE_NAME, null, contentValues);
-
+     ContentValues contentValues = new ContentValues();
+     //contentValues.put(COL1,date);
+     contentValues.put(COL2, content);
+        db.update(TABLE_NAME, contentValues, COL1 + " = ?", new String[]{date});
+        //long result = db.insert(TABLE_NAME, null, contentValues);
+       // String strSQL = " UPDATE " + TABLE_NAME +"SET COL2 = "+ content + ")WHERE COL1 = "+ date ;
+      // db.update(TABLE_NAME, contentValues, "COL1 = ?", new String[]{date});
+      // db.execSQL(strSQL);
         //if date as inserted incorrectly it will return -1
-        if (result == -1) {
-            return false;
-        } else {
-            return true;
-        }
+
+
     }
     public Cursor getListContents(){
         SQLiteDatabase db = this.getWritableDatabase();

@@ -1,5 +1,6 @@
 package com.example.hp.diary;
 
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -22,6 +23,7 @@ import java.util.ArrayList;
 
 public class DiaryContent extends AppCompatActivity implements TextToSpeech.OnInitListener{
         TextView textView;
+        Context context=this;
         DatabaseHelper myDB;
         ContentDatabase contentdb;
         Button save;
@@ -62,13 +64,14 @@ public void onClick(View v) {
         startActivity(intent);
         }
         });}
-
         public void AddData(View view){
                 String content = editText.getText().toString();
+                String date = textView.getText().toString();
+            contentdb = new ContentDatabase(context);
                 SQLiteDatabase db = contentdb.getWritableDatabase();
-                contentdb.addData(content,db);
+                contentdb.addData(date,content,db);
                 Toast.makeText(getBaseContext(),"one row inserted",Toast.LENGTH_LONG).show();
-//myDB.close();
+
         }
 
 
